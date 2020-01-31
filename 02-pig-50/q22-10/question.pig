@@ -29,3 +29,6 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+file = FOREACH u GENERATE firstname,color;
+file = FILTER file BY ENDSWITH(color,'n');
+STORE file INTO 'output' USING PigStorage(',');

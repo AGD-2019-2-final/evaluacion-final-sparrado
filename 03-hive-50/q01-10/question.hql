@@ -11,3 +11,29 @@
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS data;
+CREATE TABLE data (key STRING,
+                   fecha DATE,
+                   valor INT)
+ROW FORMAT DELIMITED FIELDS
+    TERMINATED BY '\t';
+
+LOAD DATA LOCAL INPATH 'data.tsv'
+    OVERWRITE INTO TABLE data;
+
+CREATE TABLE word_counts
+AS
+    SELECT key, count(1) AS count
+    FROM
+        data w
+GROUP BY
+    key
+ORDER BY
+    key;
+
+SELECT * FROM word_counts LIMIT 10;
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+SELECT * FROM word_counts;

@@ -39,3 +39,17 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+
+SELECT A.c1,A.c2,B.value FROM tbl0 AS A 
+JOIN
+(
+	SELECT c1,key,value
+	FROM tbl1 
+	LATERAL VIEW explode(c4) adTable AS key,value
+) AS B
+ON A.c1=B.c1 AND A.c2=B.key

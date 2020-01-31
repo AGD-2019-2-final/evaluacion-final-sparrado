@@ -12,3 +12,9 @@ fs -rm -f -r output;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+data = LOAD 'data.tsv' AS (f1: CHARARRAY, f2: BAG{t:(p:CHARARRAY)});
+let = FOREACH data GENERATE f1, FLATTEN(f2);
+let_g= FOREACH let GENERATE p;
+grouped = GROUP let_g BY p;
+contar = FOREACH grouped GENERATE group, COUNT(let_g);
+STORE contar INTO 'output';

@@ -39,4 +39,16 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS conteo;
+CREATE TABLE conteo
+AS
+SELECT YEAR(c4) AS year, c5 AS palabras FROM tbl0;
 
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+
+SELECT year, letras, count(1)
+FROM conteo LATERAL VIEW explode(palabras) adTable AS letras
+GROUP BY year, letras;

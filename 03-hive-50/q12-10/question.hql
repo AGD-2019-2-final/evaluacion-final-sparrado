@@ -27,4 +27,21 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+DROP TABLE IF EXISTS respuesta;
+CREATE TABLE respuesta
+AS
+    SELECT 
+        letra,
+        key,
+        COUNT(value)
+    FROM 
+        t0
+        LATERAL VIEW explode(c2) adTable AS letra
+        LATERAL VIEW explode(c3) adTable AS key,value
+    GROUP BY letra,key; 
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+SELECT * FROM respuesta;
 

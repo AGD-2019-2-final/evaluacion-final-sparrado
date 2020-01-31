@@ -14,3 +14,9 @@ fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+data = LOAD 'data.tsv' AS (var1:CHARARRAY, var2:BAG{tup:TUPLE(letter:CHARARRAY)}, var3:MAP[]);
+data = FOREACH data GENERATE FLATTEN(var2), FLATTEN(var3);
+data = GROUP data BY ($0,$1);
+data = FOREACH data GENERATE group, COUNT($1);
+STORE data INTO 'output';
